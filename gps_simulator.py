@@ -19,31 +19,41 @@ def csv_columns_to_lists(csv_reader):
 
 def cast_csv_extracted_types(times, latitudes, longitudes, altitudes):
     times = [int(time) for time in times]
-    latitudes = (float(lat) for lat in latitudes)
-    longitudes = (float(lng) for lng in longitudes)
-    altitudes = (float(alt) for alt in altitudes)
+    latitudes = [float(lat) for lat in latitudes]
+    longitudes = [float(lng) for lng in longitudes]
+    altitudes = [float(alt) for alt in altitudes]
     return times, latitudes, longitudes, altitudes
 
 
 def time_match_frequency(times, frequency):
     basic_time_period = times[1] - times[0]
     return tuple(arange(times[0], times[-1] + 1/frequency, 1/frequency))
+    
+
+def interpolate(x, y, x_extended):
+    f_interpolated = interp1d(x, y)
+    return f_interpolated(x_extended)
 
 
-def interpolate_coordinates(time, latitude, longitude):
-    pass
+def interpolate_coordinates(times, times_extended, lats, lngs, alts):
+    lats_extended = interpolate(times, lats, times_extended)
+    lngs_extended = interpolate(times, lngs, times_extended)
+    alts_extended = interpolate(times, alts, times_extended)
+    return lats_extended, lngs_extended, alts_extended
 
 
 def simulate(time, latitude, longitude, baudrate, tty):
     pass
+
 
 def main(flight_path_file, baudrate, tty, frequency):
     with open(flight_path_file) as csvfile:
         flight_path_reader = csv.reader(csvfile, delimiter=',')
         (times, lats, lngs, alts) = csv_columns_to_lists(flight_path_reader)
 
-    (times, lats, lngs, alts) = cast_csv_extracted_types(times, lats, lngs, alts)
-    times = time_match_frequency(times, args.frequency)
+    times, lats, lngs, alts = cast_csv_extracted_types(times, lats, lngs, alts)
+    times_extended = time_match_frequency(times, args.frequency)
+    lats, lngs, alts = interpolate_coordinates(times, times_extended, lats, lngs, alts)
 
 if __name__ == '__main__':
     APP_DESCRIPTION = 'GPS simulator, that takes a flight path in form of a \
