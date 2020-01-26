@@ -1,12 +1,21 @@
 #!/usr/local/bin/python3
 
-import argparse
+import argpars
 import csv
 import datetime
+import signal
+import sys
+from time import sleep
+
 from numpy import arange
 import pynmea2
 from scipy.interpolate import interp1d
-from time import sleep
+import serial
+
+
+def signal_handler(sig, frame):
+    print('\nProgram intertupted, closing...')
+    sys.exit(0)
 
 
 def csv_columns_to_lists(csv_reader):
@@ -61,16 +70,20 @@ def longitude_to_hemisphere(coordinate):
     return hemisphere
 
 
-def simulate(times, freq, lats, lngs, alts, baudrate, tty):
+def build_nmea_GPGGA_string(time, lat, lng, alt):
+    msg = ('GP', 'GGA', (timestamp_to_gpstime(time), 
+                        str(abs(lat)), latitude_to_hemisphere(lat),
+                        str(abs(lng)), longitude_to_hemisphere(lng),
+                        '1', '04', '2.6', str(alt), 'M',
+                        '-33.9', 'M', '', '0000'))
+    return pynmea2.GGA(*msg)
+
+
+def simulate(times, freq, lats, lngs, alts, ser):
     for time, lat, lng, alt in zip(times, lats, lngs, alts):
-        msg = ('GP', 'GGA', (timestamp_to_gpstime(time), 
-                            str(abs(lat)), latitude_to_hemisphere(lat),
-                            str(abs(lng)), longitude_to_hemisphere(lng),
-                            '1', '04', '2.6', str(alt), 'M',
-                            '-33.9', 'M', '', '0000'))
-        
-        msg = pynmea2.GGA(*msg)
-        print(str(msg))
+        msg = build_nmea_GPGGA_string(time, lat, lng, alt)
+        if VERBOSE == True:
+            print(str(msg))
         sleep(1/freq)
 
 
@@ -78,28 +91,43 @@ def main(flight_path_file, baudrate, tty, freq):
     with open(flight_path_file) as csvfile:
         flight_path_reader = csv.reader(csvfile, delimiter=',')
         (times, lats, lngs, alts) = csv_columns_to_lists(flight_path_reader)
+        
+    ser = serial.Serial(tty, baudrate=baudrate)
 
     times, lats, lngs, alts = cast_csv_extracted_types(times, lats, lngs, alts)
     times_extended = time_match_frequency(times, args.frequency)
     lats, lngs, alts = interpolate_coordinates(times, times_extended, lats, lngs, alts)
-    simulate(times, freq, lats, lngs, alts, baudrate, tty)
+    
+    simulate(times, freq, lats, lngs, alts, ser)
+    
+    ser.close()
+    sys.exit(0)
 
 
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, signal_handler)
+    
     APP_DESCRIPTION = 'GPS simulator, that takes a flight path in form of a \
                        csv file and outputs NMEA messages accordingly on a \
                        serial port.'
     parser = argparse.ArgumentParser(description=APP_DESCRIPTION)
 
     parser.add_argument('flight_path_file',
-                        help='path to the flight path csv file')
+                        help='path to the flight path csv file, the columns \
+                              has to be: unix_timestamp, latitude, longitude \
+                              altitude, (in ISO 6709 string Annex H format) \
+                              without coulumns headers')
     parser.add_argument('-b', '--baudrate', action='store', type=int,
                         default=9600, help='output serial baudrate (bps)')
-    parser.add_argument('-t', '--tty', action='store', default='ttyUSB0',
-                        help='filename for desired usb tty output')
+    parser.add_argument('-t', '--tty', action='store', default='/dev/ttyUSB0',
+                        help='file path for desired usb tty output')
     parser.add_argument('-f', '--frequency', action='store', default=1,
                         type=float,
                         help='frequency of simulated NMEA messages (Hz)')
+    parser.add_argument('-V', '--verbose', action='store_true',
+                        default='false',
+                        help='pint NMEA messages to screen before sending')
 
     args = parser.parse_args()
+    VERBOSE = args.verbose
     main(args.flight_path_file, args.baudrate, args.tty, args.frequency)
