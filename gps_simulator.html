@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module gps_simulator</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>gps_simulator</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/maciej/Developer/gps-simulator/gps_simulator.py">/Users/maciej/Developer/gps-simulator/gps_simulator.py</a></font></td></tr></table>
+    <p><tt>Executable&nbsp;for&nbsp;simulating&nbsp;GPS&nbsp;NEMA&nbsp;messaging&nbsp;in&nbsp;time,&nbsp;with&nbsp;given&nbsp;data.<br>
+Built&nbsp;to&nbsp;simulate&nbsp;high&nbsp;altitide&nbsp;balloon&nbsp;flights&nbsp;for&nbsp;hardware&nbsp;testing.<br>
+Run&nbsp;this&nbsp;program&nbsp;with&nbsp;`-h`&nbsp;to&nbsp;see&nbsp;help.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="argparse.html">argparse</a><br>
+<a href="csv.html">csv</a><br>
+</td><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="pynmea2.html">pynmea2</a><br>
+</td><td width="25%" valign=top><a href="serial.html">serial</a><br>
+<a href="signal.html">signal</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"> <dl><dt><a name="-build_nmea_gpgaa_string"><strong>build_nmea_gpgaa_string</strong></a>(time, lat, lng, alt)</dt><dd><tt>Build&nbsp;NEMA&nbsp;GPGAA&nbsp;message&nbsp;string&nbsp;from&nbsp;given&nbsp;UNIX&nbsp;universal&nbsp;time&nbsp;timestamp,<br>
+latitude&nbsp;and&nbsp;longitude&nbsp;in&nbsp;the&nbsp;ISO&nbsp;6709&nbsp;string&nbsp;Annex&nbsp;H&nbsp;format&nbsp;and&nbsp;altiitude<br>
+in&nbsp;meters&nbsp;above&nbsp;the&nbsp;sea&nbsp;level.</tt></dd></dl>
+ <dl><dt><a name="-csv_columns_to_lists"><strong>csv_columns_to_lists</strong></a>(csv_reader)</dt><dd><tt>Extract&nbsp;csv&nbsp;coluns&nbsp;in&nbsp;form&nbsp;of&nbsp;lists,&nbsp;returns&nbsp;lists&nbsp;of&nbsp;lists&nbsp;of&nbsp;columns<br>
+contents.</tt></dd></dl>
+ <dl><dt><a name="-extract_flight_data_from_csv"><strong>extract_flight_data_from_csv</strong></a>(flight_path_file)</dt><dd><tt>Read&nbsp;the&nbsp;flight&nbsp;data&nbsp;from&nbsp;given&nbsp;csv&nbsp;file.</tt></dd></dl>
+ <dl><dt><a name="-handle_sigint"><strong>handle_sigint</strong></a>()</dt><dd><tt>Handle&nbsp;UNIX&nbsp;system&nbsp;SIGINT&nbsp;signal.</tt></dd></dl>
+ <dl><dt><a name="-interpolate"><strong>interpolate</strong></a>(x, y, x_extended)</dt><dd><tt>Interpolate&nbsp;given&nbsp;f(x)&nbsp;=&nbsp;y&nbsp;function&nbsp;to&nbsp;fill&nbsp;missing&nbsp;data&nbsp;for&nbsp;denser<br>
+x_extended&nbsp;domain.</tt></dd></dl>
+ <dl><dt><a name="-interpolate_coordinates"><strong>interpolate_coordinates</strong></a>(times, times_extended, lats, lngs, alts)</dt><dd><tt>Interpolate&nbsp;GPS&nbsp;data&nbsp;to&nbsp;fill&nbsp;missing&nbsp;data&nbsp;for&nbsp;denser&nbsp;time&nbsp;domain.</tt></dd></dl>
+ <dl><dt><a name="-interpolate_times_to_frequency"><strong>interpolate_times_to_frequency</strong></a>(times, frequency)</dt><dd><tt>Interpolate&nbsp;linear&nbsp;space&nbsp;of&nbsp;timestamps&nbsp;to&nbsp;match&nbsp;given&nbsp;frequency.</tt></dd></dl>
+ <dl><dt><a name="-latitude_to_hemisphere"><strong>latitude_to_hemisphere</strong></a>(coordinate)</dt><dd><tt>Extract&nbsp;hemisphere&nbsp;char&nbsp;'N'/'S'&nbsp;symbol&nbsp;for&nbsp;latitude&nbsp;given&nbsp;in&nbsp;the&nbsp;ISO&nbsp;6709<br>
+string&nbsp;Annex&nbsp;H&nbsp;format.</tt></dd></dl>
+ <dl><dt><a name="-longitude_to_hemisphere"><strong>longitude_to_hemisphere</strong></a>(coordinate)</dt><dd><tt>Extract&nbsp;hemisphere&nbsp;char&nbsp;'W'/'E'&nbsp;symbol&nbsp;for&nbsp;longitude&nbsp;given&nbsp;in&nbsp;the&nbsp;ISO&nbsp;6709<br>
+string&nbsp;Annex&nbsp;H&nbsp;format.</tt></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>(flight_path_file, baudrate, tty, freq)</dt><dd><tt>Main&nbsp;function&nbsp;for&nbsp;the&nbsp;simulator,&nbsp;reads&nbsp;and&nbsp;prepares&nbsp;flight&nbsp;data&nbsp;from&nbsp;csv<br>
+file,&nbsp;performs&nbsp;the&nbsp;simulation&nbsp;and&nbsp;outputs&nbsp;NEMA&nbsp;GPS&nbsp;messages&nbsp;to&nbsp;the&nbsp;serial<br>
+port&nbsp;on&nbsp;given&nbsp;tty.</tt></dd></dl>
+ <dl><dt><a name="-parse_altitude"><strong>parse_altitude</strong></a>(alt)</dt><dd><tt>Parse&nbsp;altitude&nbsp;string&nbsp;extracted&nbsp;from&nbsp;file&nbsp;and&nbsp;cast&nbsp;to&nbsp;number.</tt></dd></dl>
+ <dl><dt><a name="-parse_coordinate"><strong>parse_coordinate</strong></a>(coord)</dt><dd><tt>Parse&nbsp;latitude&nbsp;or&nbsp;longitude&nbsp;coordinate&nbsp;string&nbsp;extracted&nbsp;from&nbsp;file&nbsp;and<br>
+cast&nbsp;it&nbsp;to&nbsp;number,&nbsp;the&nbsp;coordinates&nbsp;has&nbsp;to&nbsp;be&nbsp;in&nbsp;the&nbsp;ISO&nbsp;6709&nbsp;string&nbsp;Annex<br>
+H&nbsp;format.</tt></dd></dl>
+ <dl><dt><a name="-parse_flight_data"><strong>parse_flight_data</strong></a>(times, lats, lngs, alts)</dt><dd><tt>Parse&nbsp;flight&nbsp;data&nbsp;strings&nbsp;extracted&nbsp;from&nbsp;file&nbsp;and&nbsp;return&nbsp;in&nbsp;numerical<br>
+format.</tt></dd></dl>
+ <dl><dt><a name="-parse_time"><strong>parse_time</strong></a>(time)</dt><dd><tt>Parse&nbsp;timestamp&nbsp;string&nbsp;extracted&nbsp;from&nbsp;file&nbsp;and&nbsp;cast&nbsp;it&nbsp;to&nbsp;number,&nbsp;the<br>
+timestamp&nbsp;has&nbsp;to&nbsp;be&nbsp;in&nbsp;the&nbsp;UNIX&nbsp;universal&nbsp;time&nbsp;format.</tt></dd></dl>
+ <dl><dt><a name="-signal_handler"><strong>signal_handler</strong></a>(sig, frame)</dt><dd><tt>Handle&nbsp;UNIX&nbsp;system&nbsp;signals.</tt></dd></dl>
+ <dl><dt><a name="-simulate"><strong>simulate</strong></a>(times, freq, lats, lngs, alts, ser)</dt><dd><tt>Simulate&nbsp;the&nbsp;GPS&nbsp;messanging&nbsp;according&nbsp;to&nbsp;given&nbsp;data&nbsp;and&nbsp;ouptut&nbsp;NMEA<br>
+messages&nbsp;on&nbsp;serial&nbsp;port.<br>
+&nbsp;<br>
+:param&nbsp;times:&nbsp;List&nbsp;of&nbsp;timestamps&nbsp;sent&nbsp;to&nbsp;send&nbsp;during&nbsp;simulated&nbsp;flight<br>
+:param&nbsp;freq"&nbsp;Frequency&nbsp;of&nbsp;sending&nbsp;the&nbsp;simulated&nbsp;NMEA&nbsp;GPS&nbsp;messages<br>
+:param&nbsp;lats:&nbsp;List&nbsp;of&nbsp;latitude&nbsp;coordinates&nbsp;to&nbsp;send&nbsp;(in&nbsp;ISO&nbsp;6709<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;Annex&nbsp;H&nbsp;format)<br>
+:param&nbsp;lngs:&nbsp;List&nbsp;of&nbsp;longitude&nbsp;coordinates&nbsp;to&nbsp;send&nbsp;(in&nbsp;ISO&nbsp;6709<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;Annex&nbsp;H&nbsp;format)<br>
+:param&nbsp;alts:&nbsp;List&nbsp;of&nbsp;altitude&nbsp;coordinates&nbsp;to&nbsp;send&nbsp;(meters&nbsp;above&nbsp;the&nbsp;sea<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level)<br>
+:param&nbsp;ser:&nbsp;Serial&nbsp;port&nbsp;to&nbsp;which&nbsp;the&nbsp;simulated&nbsp;NMEA&nbsp;GPS&nbsp;messages&nbsp;will&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;written&nbsp;to</tt></dd></dl>
+ <dl><dt><a name="-timestamp_to_gpstime"><strong>timestamp_to_gpstime</strong></a>(timestamp)</dt><dd><tt>Parse&nbsp;universal&nbsp;UNIX&nbsp;timestamp&nbsp;into&nbsp;hoursminutesseconds&nbsp;string&nbsp;used&nbsp;in<br>
+GPS&nbsp;GPGGA&nbsp;messages.</tt></dd></dl>
+</td></tr></table>
+</body></html>

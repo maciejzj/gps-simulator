@@ -248,7 +248,7 @@ if __name__ == '__main__':
                         help='frequency of simulated NMEA messages (Hz)')
     parser.add_argument('-V', '--verbose', action='store_true',
                         default='false',
-                        help='pint NMEA messages to screen before sending')
+                        help='print NMEA messages to screen before sending')
 
     args = parser.parse_args()
     VERBOSE = args.verbose
