@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-import argpars
+import argparse
 import csv
 import datetime
 import signal
@@ -29,11 +29,31 @@ def csv_columns_to_lists(csv_reader):
     return columns
 
 
+def parse_time(time):
+    time = int(time)
+    if time < 0:
+        raise ValueError('Invalid timestamp in the given file, time cannot be \
+                          a negative number')
+    return time
+
+def parse_coordinate(coord):
+    coord = float(coord)
+    if coord < -1800000 or coord > 1800000:
+        raise ValueError('Invalid coordinate in the given file, latitude and \
+                          longitude absolute value cannot exceed 180 degrees.')
+    return coord
+
+
+def parse_altitude(alt):
+    alt = float(alt)
+    return alt
+    
+
 def cast_csv_extracted_types(times, latitudes, longitudes, altitudes):
-    times = [int(time) for time in times]
-    latitudes = [float(lat) for lat in latitudes]
-    longitudes = [float(lng) for lng in longitudes]
-    altitudes = [float(alt) for alt in altitudes]
+    times = [parse_time(time) for time in times]
+    latitudes = [parse_coordinate(lat) for lat in latitudes]
+    longitudes = [parse_coordinate(lng) for lng in longitudes]
+    altitudes = [parse_altitude(alt) for alt in altitudes]
     return times, latitudes, longitudes, altitudes
 
 
@@ -85,20 +105,25 @@ def simulate(times, freq, lats, lngs, alts, ser):
         if VERBOSE == True:
             print(str(msg))
         sleep(1/freq)
+        
+        
+def extract_flight_data_from_csv(flight_path_file):
+    with open(flight_path_file) as csvfile:
+        flight_path_reader = csv.reader(csvfile, delimiter=',')
+        times, lats, lngs, alts = csv_columns_to_lists(flight_path_reader)
+    return times, lats, lngs, alts
 
 
 def main(flight_path_file, baudrate, tty, freq):
-    with open(flight_path_file) as csvfile:
-        flight_path_reader = csv.reader(csvfile, delimiter=',')
-        (times, lats, lngs, alts) = csv_columns_to_lists(flight_path_reader)
-        
+    times, lats, lngs, alts = extract_flight_data_from_csv(flight_path_file)
+    
     ser = serial.Serial(tty, baudrate=baudrate)
 
     times, lats, lngs, alts = cast_csv_extracted_types(times, lats, lngs, alts)
     times_extended = time_match_frequency(times, args.frequency)
     lats, lngs, alts = interpolate_coordinates(times, times_extended, lats, lngs, alts)
     
-    simulate(times, freq, lats, lngs, alts, ser)
+    simulate(times, freq, lats, lngs, alts, None)
     
     ser.close()
     sys.exit(0)
