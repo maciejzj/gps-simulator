@@ -10,7 +10,7 @@ def csv_columns_to_lists(csv_reader):
     first_line = csv_reader.next()
     columns = [[field] for field in first_line]
 
-    for row in flight_path_reader:
+    for row in csv_reader:
         for i, field in enumerate(row):
             columns[i].append(field)
 
@@ -27,7 +27,7 @@ def cast_csv_extracted_types(times, latitudes, longitudes, altitudes):
 
 def time_match_frequency(times, frequency):
     basic_time_period = times[1] - times[0]
-    return tuple(arange(times[0], times[-1], 1/frequency))
+    return tuple(arange(times[0], times[-1] + 1/frequency, 1/frequency))
 
 
 def interpolate_coordinates(time, latitude, longitude):
