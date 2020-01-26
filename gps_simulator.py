@@ -4,6 +4,7 @@ import argparse
 import csv
 from numpy import arange
 from scipy.interpolate import interp1d
+from time import sleep
 
 
 def csv_columns_to_lists(csv_reader):
@@ -27,7 +28,8 @@ def cast_csv_extracted_types(times, latitudes, longitudes, altitudes):
 
 def time_match_frequency(times, frequency):
     basic_time_period = times[1] - times[0]
-    return tuple(arange(times[0], times[-1] + 1/frequency, 1/frequency))
+    margin = 1/frequency if frequency >= 1 else 1
+    return tuple(arange(times[0], times[-1] + margin, 1/frequency))
     
 
 def interpolate(x, y, x_extended):
@@ -42,11 +44,11 @@ def interpolate_coordinates(times, times_extended, lats, lngs, alts):
     return lats_extended, lngs_extended, alts_extended
 
 
-def simulate(time, latitude, longitude, baudrate, tty):
-    pass
+def simulate(time, freq, lats, lngs, baudrate, tty):
+    sleep(1/freq)
 
 
-def main(flight_path_file, baudrate, tty, frequency):
+def main(flight_path_file, baudrate, tty, freq):
     with open(flight_path_file) as csvfile:
         flight_path_reader = csv.reader(csvfile, delimiter=',')
         (times, lats, lngs, alts) = csv_columns_to_lists(flight_path_reader)
@@ -54,6 +56,7 @@ def main(flight_path_file, baudrate, tty, frequency):
     times, lats, lngs, alts = cast_csv_extracted_types(times, lats, lngs, alts)
     times_extended = time_match_frequency(times, args.frequency)
     lats, lngs, alts = interpolate_coordinates(times, times_extended, lats, lngs, alts)
+    simulate(times, freq, lats, lngs, baudrate, tty)
 
 if __name__ == '__main__':
     APP_DESCRIPTION = 'GPS simulator, that takes a flight path in form of a \
@@ -63,11 +66,12 @@ if __name__ == '__main__':
 
     parser.add_argument('flight_path_file',
                         help='path to the flight path csv file')
-    parser.add_argument('-b', '--baudrate', action='store', default=9600,
-                        help='output serial baudrate (bps)')
+    parser.add_argument('-b', '--baudrate', action='store', type=int,
+                        default=9600, help='output serial baudrate (bps)')
     parser.add_argument('-t', '--tty', action='store', default='ttyUSB0',
                         help='filename for desired usb tty output')
     parser.add_argument('-f', '--frequency', action='store', default=1,
+                        type=float,
                         help='frequency of simulated NMEA messages (Hz)')
 
     args = parser.parse_args()
