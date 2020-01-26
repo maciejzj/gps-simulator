@@ -37,26 +37,28 @@ def interpolate_coordinates(time, latitude, longitude):
 def simulate(time, latitude, longitude, baudrate, tty):
     pass
 
+def main(flight_path_file, baudrate, tty, frequency):
+    with open(flight_path_file) as csvfile:
+        flight_path_reader = csv.reader(csvfile, delimiter=',')
+        (times, lats, lngs, alts) = csv_columns_to_lists(flight_path_reader)
 
-APP_DESCRIPTION = 'GPS simulator, that takes a flight path in form of a csv \
-                   file and outputs NMEA messages accordingly on a serial \
-                   port.'
-parser = argparse.ArgumentParser(description=APP_DESCRIPTION)
+    (times, lats, lngs, alts) = cast_csv_extracted_types(times, lats, lngs, alts)
+    times = time_match_frequency(times, args.frequency)
 
-parser.add_argument('flight_path_file',
-                    help='path to the flight path csv file')
-parser.add_argument('-b', '--baudrate', action='store', default=9600,
-                    help='output serial baudrate (bps)')
-parser.add_argument('-t', '--tty', action='store', default='ttyUSB0',
-                    help='filename for desired usb tty output')
-parser.add_argument('-f', '--frequency', action='store', default=1,
-                    help='frequency of simulated NMEA messages (Hz)')
+if __name__ == '__main__':
+    APP_DESCRIPTION = 'GPS simulator, that takes a flight path in form of a \
+                       csv file and outputs NMEA messages accordingly on a \
+                       serial port.'
+    parser = argparse.ArgumentParser(description=APP_DESCRIPTION)
 
-args = parser.parse_args()
+    parser.add_argument('flight_path_file',
+                        help='path to the flight path csv file')
+    parser.add_argument('-b', '--baudrate', action='store', default=9600,
+                        help='output serial baudrate (bps)')
+    parser.add_argument('-t', '--tty', action='store', default='ttyUSB0',
+                        help='filename for desired usb tty output')
+    parser.add_argument('-f', '--frequency', action='store', default=1,
+                        help='frequency of simulated NMEA messages (Hz)')
 
-with open(args.flight_path_file) as csvfile:
-    flight_path_reader = csv.reader(csvfile, delimiter=',')
-    (times, lats, lngs, alts) = csv_columns_to_lists(flight_path_reader)
-
-(times, lats, lngs, alts) = cast_csv_extracted_types(times, lats, lngs, alts)
-times = time_match_frequency(times, args.frequency)
+    args = parser.parse_args()
+    main(args.flight_path_file, args.baudrate, args.tty, args.frequency)
