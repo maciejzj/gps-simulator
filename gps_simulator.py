@@ -1,4 +1,9 @@
 #!/usr/local/bin/python3
+'''
+Executable for simulating GPS NEMA messaging in time, with given data.
+Built to simulate high altitide balloon flights for hardware testing.
+Run this program with `-h` to see help.
+'''
 
 import argparse
 import csv
@@ -59,7 +64,7 @@ def parse_time(time):
 def parse_coordinate(coord):
     '''
     Parse latitude or longitude coordinate string extracted from file and
-    cast it to number, the coordinates has to be in the ISO 6709 string Annex \
+    cast it to number, the coordinates has to be in the ISO 6709 string Annex
     H format.
     '''
 
@@ -213,7 +218,7 @@ def main(flight_path_file, baudrate, tty, freq):
 
     ser = serial.Serial(tty, baudrate=baudrate)
 
-    simulate(times, freq, lats, lngs, alts, ser)
+    simulate(times_extended, freq, lats, lngs, alts, ser)
 
     ser.close()
     sys.exit(0)
