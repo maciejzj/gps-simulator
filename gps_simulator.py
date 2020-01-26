@@ -1,14 +1,16 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3
 
 import argparse
 import csv
+import datetime
 from numpy import arange
+import pynmea2
 from scipy.interpolate import interp1d
 from time import sleep
 
 
 def csv_columns_to_lists(csv_reader):
-    first_line = csv_reader.next()
+    first_line = next(csv_reader)
     columns = [[field] for field in first_line]
 
     for row in csv_reader:
@@ -44,8 +46,32 @@ def interpolate_coordinates(times, times_extended, lats, lngs, alts):
     return lats_extended, lngs_extended, alts_extended
 
 
-def simulate(time, freq, lats, lngs, baudrate, tty):
-    sleep(1/freq)
+def timestamp_to_gpstime(timestamp):
+    value = datetime.datetime.fromtimestamp(timestamp)
+    return value.strftime('%H%M%S')
+
+
+def latitude_to_hemisphere(coordinate):
+    hemisphere = 'N' if coordinate >= 0 else 'S'
+    return hemisphere
+ 
+   
+def longitude_to_hemisphere(coordinate):
+    hemisphere = 'E' if coordinate >= 0 else 'W'
+    return hemisphere
+
+
+def simulate(times, freq, lats, lngs, alts, baudrate, tty):
+    for time, lat, lng, alt in zip(times, lats, lngs, alts):
+        msg = ('GP', 'GGA', (timestamp_to_gpstime(time), 
+                            str(abs(lat)), latitude_to_hemisphere(lat),
+                            str(abs(lng)), longitude_to_hemisphere(lng),
+                            '1', '04', '2.6', str(alt), 'M',
+                            '-33.9', 'M', '', '0000'))
+        
+        msg = pynmea2.GGA(*msg)
+        print(str(msg))
+        sleep(1/freq)
 
 
 def main(flight_path_file, baudrate, tty, freq):
@@ -56,7 +82,8 @@ def main(flight_path_file, baudrate, tty, freq):
     times, lats, lngs, alts = cast_csv_extracted_types(times, lats, lngs, alts)
     times_extended = time_match_frequency(times, args.frequency)
     lats, lngs, alts = interpolate_coordinates(times, times_extended, lats, lngs, alts)
-    simulate(times, freq, lats, lngs, baudrate, tty)
+    simulate(times, freq, lats, lngs, alts, baudrate, tty)
+
 
 if __name__ == '__main__':
     APP_DESCRIPTION = 'GPS simulator, that takes a flight path in form of a \
