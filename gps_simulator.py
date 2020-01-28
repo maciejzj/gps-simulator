@@ -175,7 +175,7 @@ def simulate(times, freq, lats, lngs, alts, ser):
     messages on serial port.
 
     :param times: List of timestamps sent to send during simulated flight
-    :param freq" Frequency of sending the simulated NMEA GPS messages
+    :param freq: Frequency of sending the simulated NMEA GPS messages
     :param lats: List of latitude coordinates to send (in ISO 6709
                 string Annex H format)
     :param lngs: List of longitude coordinates to send (in ISO 6709
