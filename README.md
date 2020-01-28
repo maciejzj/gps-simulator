@@ -17,14 +17,14 @@ You need Python 3 to run this scipt, dependencies are listed in the
 You can run the scipt with Python or directly as an executable if your
 system matches the shebang path.
 
-`python3 -m ps_simulator.py [-h] [-b BAUDRATE] [-t TTY] [-f FREQUENCY] [-V]
+`python3 -m ps_simulator.py [-h] [-b BAUDRATE] [-t TTY] [-f FREQUENCY] [-d] [-V]
 flight_path_file`
 
 Positional arguments:
 
 * `flight_path_file` path to the flight path csv file, the columns has to
    be: unix_timestamp, latitude, longitude altitude, (in ISO 6709 string
-   Annex H format) without coulumns headers`
+   Annex H format) without coulumns headers.
 
 Optional arguments:
 
@@ -33,4 +33,6 @@ Optional arguments:
 * `-t TTY, --tty TTY` file path for desired usb tty output
 * `-f FREQUENCY, --frequency FREQUENCY` frequency of simulatedNMEA
    messages (Hz)
+* `-d, --dump` dump NMEA messages to file instead of sending them to
+   serial
 * `-V, --verbose` print NMEA messages to screen before sending
