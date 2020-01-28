@@ -42,7 +42,7 @@ def csv_columns_to_lists(csv_reader):
     columns = [[field] for field in first_line]
 
     for row in csv_reader:
-        for (i, field) in enumerate(row):
+        for i, field in enumerate(row):
             columns[i].append(field)
 
     return columns
@@ -166,10 +166,10 @@ def build_nmea_gpgaa_string(time, lat, lng, alt):
                          str(alt), 'M',
                          '0', 'M',  # Height of geoid above WGS84 ellipsoid
                          '', '0000'))  # Time since DGPS last update and id
-    return pynmea2.GGA(*msg)
+    return str(pynmea2.GGA(*msg))
 
 
-def simulate(times, freq, lats, lngs, alts, ser):
+def simulate(times, freq, lats, lngs, alts, output):
     '''
     Simulate the GPS messanging according to given data and ouptut NMEA
     messages on serial port.
@@ -177,21 +177,21 @@ def simulate(times, freq, lats, lngs, alts, ser):
     :param times: List of timestamps sent to send during simulated flight
     :param freq: Frequency of sending the simulated NMEA GPS messages
     :param lats: List of latitude coordinates to send (in ISO 6709
-                string Annex H format)
+           string Annex H format)
     :param lngs: List of longitude coordinates to send (in ISO 6709
-                string Annex H format)
+           string Annex H format)
     :param alts: List of altitude coordinates to send (meters above the sea
-                level)
-    :param ser: Serial port to which the simulated NMEA GPS messages will be
-                written to
+           level)
+    :param output: Output to which the simulated NMEA GPS messages will be
+           written
     '''
 
     for (time, lat, lng, alt) in zip(times, lats, lngs, alts):
         msg = build_nmea_gpgaa_string(time, lat, lng, alt)
         if VERBOSE is True:
-            print(str(msg))
+            print(msg)
+        output.write(str.encode(msg))
         sleep(1 / freq)
-
 
 def extract_flight_data_from_csv(flight_path_file):
     '''Read the flight data from given csv file.'''
@@ -215,12 +215,15 @@ def main(flight_path_file, baudrate, tty, freq):
     times_extended = interpolate_times_to_frequency(times, args.frequency)
     (lats, lngs, alts) = interpolate_coordinates(times, times_extended,
                                                  lats, lngs, alts)
+    
+    if DUMP is True:
+        output = open('nmea_dump.txt', 'wb')
+    else:
+        output = serial.Serial(tty, baudrate=baudrate)
 
-    ser = serial.Serial(tty, baudrate=baudrate)
+    simulate(times_extended, freq, lats, lngs, alts, output)
 
-    simulate(times_extended, freq, lats, lngs, alts, ser)
-
-    ser.close()
+    output.close()
     sys.exit(0)
 
 
@@ -246,10 +249,15 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--frequency', action='store',
                         type=float, default=1,
                         help='frequency of simulated NMEA messages (Hz)')
+    parser.add_argument('-d', '--dump', action='store_true',
+                        default='false',
+                        help='dump NMEA messages to file instead of sending \
+                              them to serial')
     parser.add_argument('-V', '--verbose', action='store_true',
                         default='false',
                         help='print NMEA messages to screen before sending')
 
     args = parser.parse_args()
     VERBOSE = args.verbose
+    DUMP = args.dump
     main(args.flight_path_file, args.baudrate, args.tty, args.frequency)
