@@ -8,6 +8,7 @@ Run this program with `-h` to see help.
 import argparse
 import csv
 import datetime
+from math import floor
 import signal
 import sys
 from time import sleep
@@ -69,9 +70,13 @@ def parse_coordinate(coord):
     '''
 
     coord = float(coord)
-    if coord < -1800000 or coord > 1800000:
+    if coord < -180 or coord > 180:
         raise ValueError('Invalid coordinate in the given file, latitude and \
                           longitude absolute value cannot exceed 180 degrees.')
+
+    deg = floor(coord)
+    mins = round((coord - deg) * 60, 3)
+    coord = float(str(deg)+str(mins))
     return coord
 
 
