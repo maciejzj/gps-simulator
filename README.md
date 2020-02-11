@@ -2,7 +2,7 @@
 
 GPS simulator, that takes a path in form of a csv file and outputs NMEA
 messages accordingly on a serial port.
-Build to aid high alititude balloons hardware tests.
+Built to aid high alititude baloons hardware tests.
 [This](https://predict.habhub.org) website can generate flight data file
 compatible with the simulator.
 
@@ -31,7 +31,7 @@ Optional arguments:
 * `-h, --help ` show this help message and exit
 * `-b BAUDRATE, --baudrate BAUDRATE` output serial baudrate (bps)
 * `-t TTY, --tty TTY` file path for desired usb tty output
-* `-f FREQUENCY, --frequency FREQUENCY` frequency of simulatedNMEA
+* `-f FREQUENCY, --frequency FREQUENCY` frequency of simulated NMEA
    messages (Hz)
 * `-d, --dump` dump NMEA messages to file instead of sending them to
    serial
