@@ -220,7 +220,7 @@ def main(flight_path_file, baudrate, tty, freq):
     times_extended = interpolate_times_to_frequency(times, args.frequency)
     (lats, lngs, alts) = interpolate_coordinates(times, times_extended,
                                                  lats, lngs, alts)
-    
+
     if DUMP is True:
         output = open('nmea_dump.txt', 'wb')
     else:
