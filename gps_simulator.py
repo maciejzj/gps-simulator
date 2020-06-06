@@ -198,6 +198,7 @@ def simulate(times, freq, lats, lngs, alts, output):
         output.write(str.encode(msg))
         sleep(1 / freq)
 
+
 def extract_flight_data_from_csv(flight_path_file):
     '''Read the flight data from given csv file.'''
 
