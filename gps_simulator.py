@@ -1,4 +1,5 @@
 #!/usr/local/bin/python3
+
 '''
 Executable for simulating GPS NEMA messaging in time, with given data.
 Built to simulate high altitide balloon flights for hardware testing.
@@ -103,7 +104,6 @@ def parse_flight_data(times, lats, lngs, alts):
 def interpolate_times_to_frequency(times, frequency):
     '''Interpolate linear space of timestamps to match given frequency.'''
 
-    basic_time_period = times[1] - times[0]
     margin = (1 / frequency if frequency >= 1 else 1)
     return tuple(arange(times[0], times[-1] + margin, 1 / frequency))
 
