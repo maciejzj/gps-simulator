@@ -17,7 +17,7 @@ You need Python 3 to run this scipt, dependencies are listed in the
 You can run the scipt with Python or directly as an executable if your
 system matches the shebang path.
 
-`python3 -m ps_simulator.py [-h] [-b BAUDRATE] [-t TTY] [-f FREQUENCY] [-d] [-V]
+`python3 -m gps_simulator.py [-h] [-b BAUDRATE] [-t TTY] [-f FREQUENCY] [-d] [-V]
 flight_path_file`
 
 Positional arguments:
